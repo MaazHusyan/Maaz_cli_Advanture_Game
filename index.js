@@ -8,22 +8,30 @@ class Player {
         this.name = name;
     }
     deductHealth() {
-        let health = this.health - 25;
-        this.health = health;
+        this.health -= 25;
     }
     increaseHealth() {
         if (this.potions > 0) {
             this.health = 100;
             this.potions--; // Reduce the number of potions
             console.log(chalk.bold.yellowBright(`\nYour Health is Now ${this.health}\n `));
+            if (this.potions == 5) {
+                console.log(chalk.bold.yellowBright(`You Have ${p1.potions} Left\n`));
+            }
+            if (this.potions == 4) {
+                console.log(chalk.bold.yellowBright(`You Have ${p1.potions} Left\n`));
+            }
+            if (this.potions == 3) {
+                console.log(chalk.bold.yellowBright(`You Have ${p1.potions} Left\n`));
+            }
             if (this.potions == 2) {
-                console.log(chalk.bold.yellowBright(`You Have 2 Potions Left\n`));
+                console.log(chalk.bold.yellowBright(`You Have ${p1.potions} Left\n`));
             }
             if (this.potions == 1) {
-                console.log(chalk.bold.yellowBright(`You Have 1 Potions Left\n`));
+                console.log(chalk.bold.yellowBright(`You Have ${p1.potions} Left\n`));
             }
             if (this.potions == 0) {
-                console.log(chalk.bold.yellowBright(`You Use All Potions\n`));
+                console.log(chalk.bold.yellowBright(`You Used All Potions, Defeat Enemy to get More...\n`));
             }
         }
         else {
@@ -38,8 +46,10 @@ class Opponent {
         this.name = name;
     }
     deductHealth() {
-        let health = this.health - 20;
-        this.health = health;
+        this.health -= 20;
+    }
+    increaseHealth(amount) {
+        this.health += amount;
     }
 }
 // Player Information
@@ -85,7 +95,7 @@ if (myOpponent.monsters === "Skeleton") {
         // Setting the Play Ground
         if (ask.options === "Attack") {
             let num = Math.floor(Math.random() * 3);
-            // Here Player Damage Setting
+            // Player Damage Setting
             if (num < 1) {
                 p1.deductHealth();
                 console.log(chalk.bold.redBright(`\n${p1.name} Health is ${p1.health}\n`));
@@ -103,11 +113,56 @@ if (myOpponent.monsters === "Skeleton") {
                 o1.deductHealth();
                 console.log(chalk.bold.greenBright(`${p1.name} Health is ${p1.health}\n`));
                 console.log(chalk.bold.redBright(`${o1.name} Health is ${o1.health}\n`));
-                // Here Opponent Taking Damage
-                if (o1.health == 0) {
+                // Opponent Taking Damage
+                if (o1.health <= 0) {
                     console.log(chalk.green(`***** ${myOpponent.monsters} Died *****`));
-                    console.log(chalk.green(`***** You Win *****\n`));
-                    process.exit();
+                    console.log(`\t${chalk.bgBlue.bold(`***** Boss Fight *****`)}`);
+                    // Boss Fight
+                    o1.name = `Boss ${myOpponent.monsters}`;
+                    o1.health = 100; // Reset health for the boss
+                    o1.increaseHealth(100); // Boss gains additional 100 HP
+                    p1.health = 100;
+                    p1.potions += 3;
+                    do {
+                        let bossFight = await inquirer.prompt({
+                            name: "action",
+                            message: "You Have 3 Options You Select: ",
+                            type: "list",
+                            choices: ["Attack", "Use Potion", "Suicide"],
+                        });
+                        if (bossFight.action === "Attack") {
+                            num = Math.floor(Math.random() * 3);
+                            if (num < 1) {
+                                p1.deductHealth();
+                                console.log(chalk.bold.redBright(`\n${p1.name} Health is ${p1.health}\n`));
+                                console.log(chalk.bold.greenBright(`${o1.name} Health is ${o1.health}\n`));
+                                if (p1.health <= 0) {
+                                    console.log(chalk.red(`***** ${p1.name} You Lost *****\n`));
+                                    process.exit();
+                                }
+                            }
+                            if (num == 1) {
+                                console.log(chalk.bold.yellowBright("\nThe Attack Was Lost\n"));
+                            }
+                            if (num > 1) {
+                                o1.deductHealth();
+                                console.log(chalk.bold.greenBright(`${p1.name} Health is ${p1.health}\n`));
+                                console.log(chalk.bold.redBright(`${o1.name} Health is ${o1.health}\n`));
+                                if (o1.health <= 0) {
+                                    console.log(chalk.green(`***** You Win *****`));
+                                    process.exit();
+                                }
+                            }
+                        }
+                        if (bossFight.action === "Use Potion") {
+                            p1.increaseHealth();
+                        }
+                        if (bossFight.action === "Suicide") {
+                            console.log(chalk.bold.yellowBright(`Suicide is forbidden and you're very Stupid `));
+                            console.log(chalk.bold.redBright(`***** You Lost *****\n`));
+                            process.exit();
+                        }
+                    } while (true);
                 }
             }
         }
@@ -140,7 +195,7 @@ if (myOpponent.monsters === "Zombie") {
         // Setting the Play Ground
         if (ask.options === "Attack") {
             let num = Math.floor(Math.random() * 3);
-            // Here Player Damage Setting
+            // Player Damage Setting
             if (num < 1) {
                 p1.deductHealth();
                 console.log(chalk.bold.redBright(`\n${p1.name} Health is ${p1.health}\n`));
@@ -158,11 +213,56 @@ if (myOpponent.monsters === "Zombie") {
                 o1.deductHealth();
                 console.log(chalk.bold.greenBright(`${p1.name} Health is ${p1.health}\n`));
                 console.log(chalk.bold.redBright(`${o1.name} Health is ${o1.health}\n`));
-                // Here Opponent Taking Damage
-                if (o1.health == 0) {
+                // Opponent Taking Damage
+                if (o1.health <= 0) {
                     console.log(chalk.green(`***** ${myOpponent.monsters} Died *****`));
-                    console.log(chalk.green(`***** You Win *****\n`));
-                    process.exit();
+                    console.log(`\t${chalk.bgBlue.bold(`***** Boss Fight *****`)}`);
+                    // Boss Fight
+                    o1.name = `Boss ${myOpponent.monsters}`;
+                    o1.health = 100; // Reset health for the boss
+                    o1.increaseHealth(100); // Boss gains additional 100 HP
+                    p1.health = 100;
+                    p1.potions += 3;
+                    do {
+                        let bossFight = await inquirer.prompt({
+                            name: "action",
+                            message: "You Have 3 Options You Select: ",
+                            type: "list",
+                            choices: ["Attack", "Use Potion", "Suicide"],
+                        });
+                        if (bossFight.action === "Attack") {
+                            num = Math.floor(Math.random() * 3);
+                            if (num < 1) {
+                                p1.deductHealth();
+                                console.log(chalk.bold.redBright(`\n${p1.name} Health is ${p1.health}\n`));
+                                console.log(chalk.bold.greenBright(`${o1.name} Health is ${o1.health}\n`));
+                                if (p1.health <= 0) {
+                                    console.log(chalk.red(`***** ${p1.name} You Lost *****\n`));
+                                    process.exit();
+                                }
+                            }
+                            if (num == 1) {
+                                console.log(chalk.bold.yellowBright("\nThe Attack Was Lost\n"));
+                            }
+                            if (num > 1) {
+                                o1.deductHealth();
+                                console.log(chalk.bold.greenBright(`${p1.name} Health is ${p1.health}\n`));
+                                console.log(chalk.bold.redBright(`${o1.name} Health is ${o1.health}\n`));
+                                if (o1.health <= 0) {
+                                    console.log(chalk.green(`***** You Win *****`));
+                                    process.exit();
+                                }
+                            }
+                        }
+                        if (bossFight.action === "Use Potion") {
+                            p1.increaseHealth();
+                        }
+                        if (bossFight.action === "Suicide") {
+                            console.log(chalk.bold.yellowBright(`Suicide is forbidden and you're very Stupid `));
+                            console.log(chalk.bold.redBright(`***** You Lost *****\n`));
+                            process.exit();
+                        }
+                    } while (true);
                 }
             }
         }
@@ -194,13 +294,13 @@ if (myOpponent.monsters === "Ender Dragon") {
         ]);
         // Setting the Play Ground
         if (ask.options === "Attack") {
-            console.log(chalk.bold.yellowBright(`\nYou Can't Kill A ${o1.name} Because It's Too Strong And It's Stupid To Fight It And You're so Dumn:  ${p1.name}`));
+            console.log(chalk.bold.yellowBright(`\nYou Can't Kill A ${o1.name} Because It's Too Strong... `));
             console.log(chalk.bold.red(`*** You're Dead ***`));
             process.exit();
         }
         // Drinking Potion
         if (ask.options === "Use Potion") {
-            console.log(chalk.bold.yellowBright(`\nYou Cannot Do Anything About It Even Drinking Health Potions\n`));
+            console.log(chalk.bold.yellowBright(`\nYou Cannot Do Anything About It Even Drinking Health Potions...\n`));
         }
         // Attempt Suicide
         if (ask.options === "Suicide") {
