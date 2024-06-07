@@ -1,3 +1,5 @@
+#! user/bin/env/node
+
 import chalk from "chalk";
 import inquirer from "inquirer";
 
@@ -84,7 +86,7 @@ let myOpponent = await inquirer.prompt([
     name: "monsters",
     message: "Select Your Opponent: ",
     type: "list",
-    choices: ["Skeleton","Zombie","Ender Dragon"],
+    choices: ["Skeleton", "Zombie", "Ender Dragon"],
   },
 ]);
 
@@ -404,7 +406,8 @@ if (myOpponent.monsters === "Ender Dragon") {
     if (ask.options === "Attack") {
       console.log(
         chalk.bold.yellowBright(
-          `\nYou Can't Kill A ${o1.name} Because It's Too Strong... `)
+          `\nYou Can't Kill A ${o1.name} Because It's Too Strong... `
+        )
       );
       console.log(chalk.bold.red(`*** You're Dead ***`));
       process.exit();
@@ -429,4 +432,3 @@ if (myOpponent.monsters === "Ender Dragon") {
     }
   } while (true);
 }
-
